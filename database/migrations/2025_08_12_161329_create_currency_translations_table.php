@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('restaurant_opening_hours', function (Blueprint $table) {
+        Schema::create('currency_translations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('restaurant_id')->constrained('restaurants')->onDelete('cascade');
-            $table->integer('weekday');
-            $table->time('opens_at')->nullable(); 
-            $table->time('closes_at')->nullable();
+            $table->foreignId('currency_id')->constrained()->onDelete('cascade');
+            $table->string('locale')->index();
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('restaurant_opening_hours');
+        Schema::dropIfExists('currency_translations');
     }
 };

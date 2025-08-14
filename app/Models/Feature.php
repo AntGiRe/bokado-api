@@ -23,4 +23,30 @@ class Feature extends Model
             ->withPivot('details')
             ->withTimestamps();
     }
+
+    public function scopeFilterByNameTranslation($query, string $filter, string $locale)
+    {
+        $query->whereHas('translations', function ($q) use ($filter, $locale) {
+            $q->where('locale', $locale)
+                ->where('name', 'like', "%{$filter}%");
+        });
+    }
+
+    public function translations()
+    {
+        return $this->hasMany(FeatureTranslation::class);
+    }
+
+    public function translation($locale = null)
+    {
+        return $this->translations()
+            ->where('locale', $locale ?? app()->getLocale())
+            ->first();
+    }
+
+    public function getTranslatedNameAttribute(): ?string
+    {
+        $locale = app()->getLocale();
+        return $this->translations->where('locale', $locale)->first()?->name;
+    }
 }

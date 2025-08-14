@@ -42,4 +42,12 @@ class RestaurantPaymentMethodService
     {
         return RestaurantPaymentMethod::create($data);
     }
+
+    public function getByRestaurantAndPaymentMethodIfExists(int $restaurantId, int $paymentMethodId): ?RestaurantPaymentMethod
+    {
+        return RestaurantPaymentMethod::with('paymentMethod.translations')
+            ->where('restaurant_id', $restaurantId)
+            ->where('payment_method_id', $paymentMethodId)
+            ->first();
+    }
 }

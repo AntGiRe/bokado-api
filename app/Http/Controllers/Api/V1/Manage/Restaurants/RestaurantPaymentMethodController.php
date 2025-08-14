@@ -43,7 +43,13 @@ class RestaurantPaymentMethodController extends Controller
         $data = $request->validated();
         $data['restaurant_id'] = $restaurant->id;
 
-        $item = $this->service->create($data)->load('paymentMethod.translations');
+        $existingItem = $this->service->getByRestaurantAndPaymentMethodIfExists($restaurant->id, $data['payment_method_id']);
+
+        if ($existingItem) {
+            $item = $existingItem;
+        } else {
+            $item = $this->service->create($data)->load('paymentMethod.translations');
+        }
 
         return response()->json([
             'data' => [

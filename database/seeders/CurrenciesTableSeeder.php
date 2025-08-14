@@ -14,7 +14,9 @@ class CurrenciesTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('currencies')->insert([
-            ['name' => 'Euro', 'code' => 'EUR', 'symbol' => '€']
+            ['name' => 'Euro', 'code' => 'EUR', 'symbol' => '€'],
+            ['name' => 'US Dollar', 'code' => 'USD', 'symbol' => '$'],
+            ['name' => 'British Pound', 'code' => 'GBP', 'symbol' => '£'],
         ]);
     }
 }

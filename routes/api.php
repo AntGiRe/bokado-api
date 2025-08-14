@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Api\V1\Auth\NewPasswordController;
+use App\Http\Controllers\Api\v1\Currency\CurrencyController;
+use App\Http\Controllers\Api\v1\Features\FeatureController;
 use App\Http\Controllers\Api\V1\Manage\Restaurants\RestaurantController;
 use App\Http\Controllers\Api\V1\Manage\Restaurants\RestaurantPaymentMethodController;
 use App\Http\Controllers\Api\V1\PaymentMethods\PaymentMethodController;
@@ -77,6 +79,18 @@ Route::prefix('v1')->middleware(SetUserLocale::class)->group(function () {
     Route::prefix('payment-methods')->group(function () {
         Route::get('/', [PaymentMethodController::class, 'index']);
         Route::get('/{paymentMethod}', [PaymentMethodController::class, 'show']);
+    });
+
+    // Payment methods TODO DELETE in admin
+    Route::prefix('currency')->group(function () {
+        Route::get('/', [CurrencyController::class, 'index']);
+        Route::get('/{currency}', [CurrencyController::class, 'show']);
+    });
+
+    // Payment methods TODO DELETE in admin
+    Route::prefix('feature')->group(function () {
+        Route::get('/', [FeatureController::class, 'index']);
+        Route::get('/{feature}', [FeatureController::class, 'show']);
     });
 
     // Locations

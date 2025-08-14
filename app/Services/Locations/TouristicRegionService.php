@@ -12,35 +12,28 @@ class TouristicRegionService
      */
     public function getAllTouristicRegions(array $filters = []): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        $query = TouristicRegion::with('translations');
+        $query = TouristicRegion::query();
 
         // Filtrar por ID o nombre de zona turística
         if (!empty($filters['touristic_region'])) {
-            $query->where(function ($q) use ($filters, $locale) {
+            $query->where(function ($q) use ($filters) {
                 // Buscar por ID si es numérico
                 if (is_numeric($filters['touristic_region'])) {
                     $q->where('id', $filters['touristic_region']);
                 }
-                // Buscar por código
-                $q->orWhere('code', 'like', '%' . $filters['touristic_region'] . '%')
-                  // Buscar por nombre traducido
-                  ->orWhereHas('translations', function ($tq) use ($filters, $locale) {
-                      $tq->where('locale', $locale)
-                         ->where('name', 'like', '%' . $filters['touristic_region'] . '%');
-                  });
+                // Buscar por nombre
+                $q->orWhere('name', 'like', '%' . $filters['touristic_region'] . '%');
             });
         }
 
-        return $query->select(['id', 'code'])
-            ->orderBy('code')
+        return $query->select(['id', 'name', 'description'])
+            ->orderBy('name')
             ->paginate(50)
             ->through(function (TouristicRegion $touristicRegion) {
                 return [
                     'id' => $touristicRegion->id,
-                    'code' => $touristicRegion->code,
-                    'name' => $touristicRegion->translated_name,
+                    'name' => $touristicRegion->name,
+                    'description' => $touristicRegion->description,
                 ];
             });
     }
@@ -51,14 +44,13 @@ class TouristicRegionService
     public function getTouristicRegionWithRelations(TouristicRegion $touristicRegion): array
     {
         $touristicRegion->load([
-            'cities.translations',
-            'translations'
+            'cities.translations'
         ]);
 
         return [
             'id' => $touristicRegion->id,
-            'code' => $touristicRegion->code,
-            'name' => $touristicRegion->translated_name,
+            'name' => $touristicRegion->name,
+            'description' => $touristicRegion->description,
             'cities' => $touristicRegion->cities->map(function ($city) {
                 return [
                     'id' => $city->id,
