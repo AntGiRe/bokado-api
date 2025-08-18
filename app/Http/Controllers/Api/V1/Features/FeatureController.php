@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Features;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\HandlesTranslatedResources;
 use App\Services\Utils\TranslationFallbackService;
 use App\Helpers\ApiResponseHelper;
 use App\Models\Feature;
@@ -10,6 +11,8 @@ use Illuminate\Http\Request;
 
 class FeatureController extends Controller
 {
+    use HandlesTranslatedResources;
+
     protected $translationService;
 
     public function __construct(TranslationFallbackService $translationService)
@@ -17,41 +20,18 @@ class FeatureController extends Controller
         $this->translationService = $translationService;
     }
 
-    public function index(Request $request)
+    protected function getTranslationService()
     {
-        $locale = $request->query('locale', app()->getLocale());
-        $filter = $request->query('feature');
-        $perPage = $request->query('per_page', 20);
-
-        $query = Feature::with('translations');
-
-        if ($filter) {
-            $query->filterByNameTranslation($filter, $locale);
-        }
-
-        $paginated = $query->paginate($perPage);
-
-        $paginated->getCollection()->transform(function ($feature) use ($locale) {
-            return [
-                'id' => $feature->id,
-                'name' => $this->translationService->getTranslation($feature, $locale, 'name'),
-            ];
-        });
-
-        return ApiResponseHelper::paginated($paginated);
+        return $this->translationService;
     }
 
-    public function show(Feature $feature)
+    public function index(Request $request)
     {
-        $locale = app()->getLocale();
+        return $this->translatedIndex($request, Feature::class);
+    }
 
-        $name = $this->translationService->getTranslation($feature, $locale, 'name');
-
-        $data = [
-            'id' => $feature->id,
-            'name' => $name,
-        ];
-
-        return \App\Helpers\ApiResponseHelper::single($data);
+    public function show($id)
+    {
+        return $this->translatedShow($id, Feature::class);
     }
 }

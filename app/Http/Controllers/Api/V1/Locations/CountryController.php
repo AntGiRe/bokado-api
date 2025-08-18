@@ -3,32 +3,35 @@
 namespace App\Http\Controllers\Api\v1\Locations;
 
 use App\Http\Controllers\Controller;
-use App\Services\Locations\CountryService;
+use App\Http\Traits\HandlesTranslatedResources;
+use App\Services\Utils\TranslationFallbackService;
 use App\Models\Country;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CountryController extends Controller
 {
-    public function __construct(private CountryService $countryService) {}
+    use HandlesTranslatedResources;
+
+    protected $translationService;
+
+    public function __construct(TranslationFallbackService $translationService)
+    {
+        $this->translationService = $translationService;
+    }
+
+    protected function getTranslationService()
+    {
+        return $this->translationService;
+    }
 
     public function index(Request $request): JsonResponse
     {
-        $data = $this->countryService->getAll($request->query('country'));
-
-        return response()->json([
-            'data' => $data,
-        ]);
+        return $this->translatedIndex($request, Country::class);
     }
 
-    public function show(Request $request, Country $country): JsonResponse
+    public function show($id): JsonResponse
     {
-        return response()->json([
-            'data' => [
-                'id' => $country->id,
-                'code' => $country->code,
-                'name' => $country->translated_name,
-            ],
-        ]);
+        return $this->translatedShow($id, Country::class);
     }
 }

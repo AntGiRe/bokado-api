@@ -24,11 +24,11 @@ class Feature extends Model
             ->withTimestamps();
     }
 
-    public function scopeFilterByNameTranslation($query, string $filter, string $locale)
+    public function scopeFilterByName($query, $name, $locale)
     {
-        $query->whereHas('translations', function ($q) use ($filter, $locale) {
+        return $query->whereHas('translations', function ($q) use ($name, $locale) {
             $q->where('locale', $locale)
-                ->where('name', 'like', "%{$filter}%");
+                ->where('name', 'like', '%' . $name . '%');
         });
     }
 
@@ -42,11 +42,5 @@ class Feature extends Model
         return $this->translations()
             ->where('locale', $locale ?? app()->getLocale())
             ->first();
-    }
-
-    public function getTranslatedNameAttribute(): ?string
-    {
-        $locale = app()->getLocale();
-        return $this->translations->where('locale', $locale)->first()?->name;
     }
 }

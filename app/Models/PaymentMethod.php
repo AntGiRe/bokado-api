@@ -13,10 +13,12 @@ class PaymentMethod extends Model
         'is_active',
     ];
 
-    public function getTranslatedNameAttribute()
+    public function scopeFilterByName($query, $name, $locale)
     {
-        $locale = app()->getLocale();
-        return $this->translations->where('locale', $locale)->first()?->name;
+        return $query->whereHas('translations', function ($q) use ($name, $locale) {
+            $q->where('locale', $locale)
+                ->where('name', 'like', '%' . $name . '%');
+        });
     }
 
     public function restaurantPaymentMethods()

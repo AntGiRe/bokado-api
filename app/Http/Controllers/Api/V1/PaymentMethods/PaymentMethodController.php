@@ -3,40 +3,40 @@
 namespace App\Http\Controllers\Api\v1\PaymentMethods;
 
 use App\Http\Controllers\Controller;
-use App\Services\PaymentMethods\PaymentMethodService;
+use Illuminate\Http\Request;
 use App\Models\PaymentMethod;
-use Illuminate\Http\JsonResponse;
+use App\Http\Traits\HandlesTranslatedResources;
+use App\Services\Utils\TranslationFallbackService;
 
 class PaymentMethodController extends Controller
 {
-    public function __construct(private PaymentMethodService $paymentMethodService) {}
+    use HandlesTranslatedResources;
+
+    protected $translationService;
+
+    public function __construct(TranslationFallbackService $translationService)
+    {
+        $this->translationService = $translationService;
+    }
+
+    protected function getTranslationService()
+    {
+        return $this->translationService;
+    }
 
     /**
      * Display a listing of the payment methods.
      */
-    public function index(): JsonResponse
+    public function index(Request $request)
     {
-        $paymentMethods = $this->paymentMethodService->getActiveWithTranslations();
-
-        return response()->json([
-            'data' => $paymentMethods
-        ]);
+        return $this->translatedIndex($request, PaymentMethod::class);
     }
 
     /**
      * Display the specified payment method.
      */
-    public function show(PaymentMethod $paymentMethod): JsonResponse
+    public function show($id)
     {
-        $paymentMethod->load('translations');
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $paymentMethod->id,
-                'code' => $paymentMethod->code,
-                'name' => $paymentMethod->translated_name ?? $paymentMethod->code,
-            ],
-        ]);
+        return $this->translatedShow($id, PaymentMethod::class);
     }
 }

@@ -24,9 +24,12 @@ class Country extends Model
         return $this->hasMany(CountryTranslation::class);
     }
 
-    public function getTranslatedNameAttribute()
+    public function scopeFilterByName($query, $name, $locale)
     {
-        return $this->translations->where('locale', app()->getLocale())->first()?->name ?? $this->code;
+        return $query->whereHas('translations', function ($q) use ($name, $locale) {
+            $q->where('locale', $locale)
+                ->where('name', 'like', '%' . $name . '%');
+        });
     }
 
 }
