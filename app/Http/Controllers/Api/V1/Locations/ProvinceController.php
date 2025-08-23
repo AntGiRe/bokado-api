@@ -4,42 +4,40 @@ namespace App\Http\Controllers\Api\v1\Locations;
 
 use App\Http\Controllers\Controller;
 use App\Models\Province;
-use App\Services\Locations\ProvinceService;
+use App\Http\Traits\HandlesTranslatedResources;
+use App\Services\Utils\TranslationFallbackService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProvinceController extends Controller
 {
-    public function __construct(private ProvinceService $provinceService) {}
+    use HandlesTranslatedResources;
+
+    protected $translationService;
+
+    public function __construct(TranslationFallbackService $translationService)
+    {
+        $this->translationService = $translationService;
+    }
+
+    protected function getTranslationService()
+    {
+        return $this->translationService;
+    }
 
     /**
      * Display a listing of the provinces.
      */
     public function index(Request $request): JsonResponse
     {
-        $filters = $request->only(['region-id', 'country-id', 'province']);
-        $provinces = $this->provinceService->getAllProvinces($filters);
-
-        return response()->json([
-        'data' => $provinces->items(), // Solo los datos
-        'pagination' => [
-            'current_page' => $provinces->currentPage(),
-            'last_page' => $provinces->lastPage(),
-            'per_page' => $provinces->perPage(),
-            'total' => $provinces->total(),
-        ]
-    ]);
+        return $this->translatedIndex($request, Province::class);
     }
 
     /**
      * Display the specified province.
      */
-    public function show(Province $province): JsonResponse
+    public function show($id): JsonResponse
     {
-        $province = $this->provinceService->getProvinceWithRelations($province);
-
-        return response()->json([
-            'data' => $province
-        ]);
+        return $this->translatedShow($id, Province::class, ['region.translations', 'region.country.translations']);
     }
 }

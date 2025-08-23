@@ -4,42 +4,40 @@ namespace App\Http\Controllers\Api\v1\Locations;
 
 use App\Http\Controllers\Controller;
 use App\Models\City;
-use App\Services\Locations\CityService;
+use App\Http\Traits\HandlesTranslatedResources;
+use App\Services\Utils\TranslationFallbackService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CityController extends Controller
 {
-    public function __construct(private CityService $cityService) {}
+    use HandlesTranslatedResources;
+
+    protected $translationService;
+
+    public function __construct(TranslationFallbackService $translationService)
+    {
+        $this->translationService = $translationService;
+    }
+
+    protected function getTranslationService()
+    {
+        return $this->translationService;
+    }
 
     /**
      * Display a listing of the cities.
      */
     public function index(Request $request): JsonResponse
     {
-        $filters = $request->only(['region-id', 'country-id', 'province-id', 'city']);
-        $cities = $this->cityService->getAllCities($filters);
-
-        return response()->json([
-            'data' => $cities->items(),
-            'pagination' => [
-                'current_page' => $cities->currentPage(),
-                'last_page' => $cities->lastPage(),
-                'per_page' => $cities->perPage(),
-                'total' => $cities->total(),
-            ]
-        ]);
+        return $this->translatedIndex($request, City::class);
     }
 
     /**
      * Display the specified city.
      */
-    public function show(City $city): JsonResponse
+    public function show($id): JsonResponse
     {
-        $city = $this->cityService->getCityWithRelations($city);
-
-        return response()->json([
-            'data' => $city
-        ]);
+        return $this->translatedShow($id, City::class, ['province.region.country.translations', 'province.region.translations', 'province.translations']);
     }
 }

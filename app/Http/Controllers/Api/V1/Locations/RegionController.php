@@ -5,41 +5,36 @@ namespace App\Http\Controllers\Api\v1\Locations;
 use App\Http\Controllers\Controller;
 use App\Models\Region;
 use Illuminate\Http\JsonResponse;
-use App\Services\Locations\RegionService;
+use App\Http\Traits\HandlesTranslatedResources;
+use App\Services\Utils\TranslationFallbackService;
 use Illuminate\Http\Request;
 
 class RegionController extends Controller
 {
-    public function __construct(private RegionService $regionService) {}
+    use HandlesTranslatedResources;
 
-    /**
-     * Display a listing of the regions.
-     */
+    protected $translationService;
+
+    public function __construct(TranslationFallbackService $translationService)
+    {
+        $this->translationService = $translationService;
+    }
+
+    protected function getTranslationService()
+    {
+        return $this->translationService;
+    }
+
     public function index(Request $request): JsonResponse
     {
-        $filters = $request->only(['country-id', 'region']);
-        $regions = $this->regionService->getAllRegions($filters);
-
-        return response()->json([
-            'data' => $regions->items(),
-            'pagination' => [
-                'current_page' => $regions->currentPage(),
-                'last_page' => $regions->lastPage(),
-                'per_page' => $regions->perPage(),
-                'total' => $regions->total(),
-            ]
-        ]);
+        return $this->translatedIndex($request, Region::class);
     }
 
     /**
      * Display the specified region.
      */
-    public function show(Region $region): JsonResponse
+    public function show($id): JsonResponse
     {
-        $region = $this->regionService->getRegionWithRelations($region);
-
-        return response()->json([
-            'data' => $region
-        ]);
+        return $this->translatedShow($id, Region::class, ['country.translations']);
     }
 }
