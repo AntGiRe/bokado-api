@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use App\Services\Auth\AuthService;
+use App\Helpers\ApiResponseHelper;
 
 
 class NewPasswordController extends Controller
@@ -26,11 +27,8 @@ class NewPasswordController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $status = $this->authService->resetPassword($validated);
+        $this->authService->resetPassword($validated);
 
-        return response()->json([
-            'message' => __('Your password has been reset.'),
-            'status' => $status,
-        ]);
+        return ApiResponseHelper::message(__('Your password has been reset.'));
     }
 }
