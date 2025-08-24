@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('cuisine_id')->constrained('cuisines')->onDelete('cascade');
             $table->string('locale')->index();
+            $table->foreign('locale')->references('code')->on('languages')->onDelete('cascade');
             $table->string('name')->nullable();
             $table->unique(['cuisine_id', 'locale'], 'cuisine_locale_unique');
             $table->timestamps();

@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('province_translations', function (Blueprint $table) {
+        Schema::create('touristic_region_translations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('province_id')->constrained('provinces')->onDelete('cascade');
-            $table->string('locale', 2);
+            $table->foreignId('touristic_region_id')->constrained()->onDelete('cascade');
+            $table->string('locale')->index();
             $table->foreign('locale')->references('code')->on('languages')->onDelete('cascade');
             $table->string('name');
+            $table->text('description')->nullable();
+            $table->unique(['touristic_region_id', 'locale']);
             $table->timestamps();
-
-            $table->unique(['province_id', 'locale']);
-            $table->index(['locale']);
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('province_translations');
+        Schema::dropIfExists('touristic_region_translations');
     }
 };

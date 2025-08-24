@@ -55,7 +55,9 @@ class Province extends Model
 
     public function scopeFilterByCountryId($query, $countryId)
     {
-        return $query->where('country_id', $countryId);
+        return $query->whereHas('region.country', function ($q) use ($countryId) {
+            $q->where('id', $countryId);
+        });
     }
 
     public function scopeFilterByRegionId($query, $regionId)

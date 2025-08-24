@@ -17,10 +17,19 @@ class ApiResponseHelper
         ]);
     }
 
-    public static function single($data, int $status = 200)
+    public static function single($data, ?string $message = null, int $status = 200)
     {
-        return response()->json([
-            'data' => $data
-        ], $status);
+        $response = ['data' => $data];
+
+        if ($message !== null) {
+            $response['message'] = $message;
+        }
+
+        return response()->json($response, $status);
+    }
+
+    public static function message(string $message, int $status = 200)
+    {
+        return response()->json(['message' => $message], $status);
     }
 }

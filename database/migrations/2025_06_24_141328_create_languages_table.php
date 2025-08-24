@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('regions', function (Blueprint $table) {
+        Schema::create('languages', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();
-            $table->string('slug')->unique();
-            $table->foreignId('country_id')->constrained('countries')->onDelete('cascade');
+            $table->string('code', 10)->unique();
+            $table->string('name');
+            $table->string('native_name');
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('regions');
+        Schema::dropIfExists('languages');
     }
 };

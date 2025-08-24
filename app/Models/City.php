@@ -15,6 +15,8 @@ class City extends Model
         'province_id',
     ];
 
+    protected $hidden = ['pivot'];
+
     // A city belongs to a province
     public function province()
     {
@@ -54,12 +56,16 @@ class City extends Model
 
     public function scopeFilterByCountryId($query, $countryId)
     {
-        return $query->where('country_id', $countryId);
+        return $query->whereHas('province.region.country', function ($q) use ($countryId) {
+            $q->where('id', $countryId);
+        });
     }
 
     public function scopeFilterByRegionId($query, $regionId)
     {
-        return $query->where('region_id', $regionId);
+        return $query->whereHas('province.region', function ($q) use ($regionId) {
+            $q->where('id', $regionId);
+        });
     }
 
     public function scopeFilterByProvinceId($query, $provinceId)

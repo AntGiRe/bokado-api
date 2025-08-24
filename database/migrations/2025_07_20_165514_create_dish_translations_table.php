@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('dish_id')->constrained('dishes')->onDelete('cascade');
             $table->string('locale')->index();
+            $table->foreign('locale')->references('code')->on('languages')->onDelete('cascade');
             $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->unique(['dish_id', 'locale'], 'dish_locale_unique');

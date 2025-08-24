@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('region_id')->constrained('regions')->onDelete('cascade');
             $table->string('locale', 2);
+            $table->foreign('locale')->references('code')->on('languages')->onDelete('cascade');
             $table->string('name');
             $table->timestamps();
 

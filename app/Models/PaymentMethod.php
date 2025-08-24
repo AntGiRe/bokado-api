@@ -17,7 +17,7 @@ class PaymentMethod extends Model
     {
         return $query->whereHas('translations', function ($q) use ($name, $locale) {
             $q->where('locale', $locale)
-                ->where('name', 'like', '%' . $name . '%');
+                ->where('name', 'like', "%$name%");
         });
     }
 

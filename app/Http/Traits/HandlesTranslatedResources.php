@@ -90,13 +90,19 @@ trait HandlesTranslatedResources
     {
         if ($model instanceof Model) {
             if ($model->relationLoaded('translations')) {
-                $translation = $this->getTranslationService()->getTranslation($model, $locale, 'name');
+                $fields = property_exists($model, 'translatable') ? $model->translatable : ['name'];
 
-                if ($translation === null && $fallbackLocale !== $locale) {
-                    $translation = $this->getTranslationService()->getTranslation($model, $fallbackLocale, 'name');
+                foreach ($fields as $field) {
+                    $translation = $this->getTranslationService()->getTranslation($model, $locale, $field)
+                        ?? ($fallbackLocale !== $locale
+                            ? $this->getTranslationService()->getTranslation($model, $fallbackLocale, $field)
+                            : null);
+
+                    if ($translation !== null) {
+                        $model->$field = $translation;
+                    }
                 }
 
-                $model->name = $translation ?? $model->name;
                 unset($model->translations);
             }
 

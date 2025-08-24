@@ -29,7 +29,8 @@ class AuthService
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'phone' => $data['phone']
+            'phone' => $data['phone'],
+            'preferred_language' => $data['preferred_language'] ?? 'en',
         ]);
 
         event(new Registered($user));

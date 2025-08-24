@@ -14,21 +14,21 @@ class ProvincesTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('provinces')->insert([
-            ['code' => 'Málaga', 'region_id' => 1],
-            ['code' => 'Cádiz', 'region_id' => 1],
-            ['code' => 'Sevilla', 'region_id' => 1],
-            ['code' => 'Granada', 'region_id' => 1],
-            ['code' => 'Almería', 'region_id' => 1],
-            ['code' => 'Córdoba', 'region_id' => 1],
-            ['code' => 'Jaén', 'region_id' => 1],
-            ['code' => 'Huelva', 'region_id' => 1],
-            ['code' => 'Badajoz', 'region_id' => 2],
-            ['code' => 'Cáceres', 'region_id' => 2],
-            ['code' => 'Madrid', 'region_id' => 3],
-            ['code' => 'Barcelona', 'region_id' => 4],
-            ['code' => 'Valencia', 'region_id' => 5],
-            ['code' => 'Bilbao', 'region_id' => 6],
-            ['code' => 'Zaragoza', 'region_id' => 7],
+            ['code' => 'Málaga', 'slug' => 'malaga-p1', 'region_id' => 1],
+            ['code' => 'Cádiz', 'slug' => 'cadiz-p2', 'region_id' => 1],
+            ['code' => 'Sevilla', 'slug' => 'sevilla-p3', 'region_id' => 1],
+            ['code' => 'Granada', 'slug' => 'granada-p4', 'region_id' => 1],
+            ['code' => 'Almería', 'slug' => 'almeria-p5', 'region_id' => 1],
+            ['code' => 'Córdoba', 'slug' => 'cordoba-p6', 'region_id' => 1],
+            ['code' => 'Jaén', 'slug' => 'jaen-p7', 'region_id' => 1],
+            ['code' => 'Huelva', 'slug' => 'huelva-p8', 'region_id' => 1],
+            ['code' => 'Badajoz', 'slug' => 'badajoz-p9', 'region_id' => 2],
+            ['code' => 'Cáceres', 'slug' => 'caceres-p10', 'region_id' => 2],
+            ['code' => 'Madrid', 'slug' => 'madrid-p11', 'region_id' => 3],
+            ['code' => 'Barcelona', 'slug' => 'barcelona-p12', 'region_id' => 4],
+            ['code' => 'Valencia', 'slug' => 'valencia-p13', 'region_id' => 5],
+            ['code' => 'Bilbao', 'slug' => 'bilbao-p14', 'region_id' => 6],
+            ['code' => 'Zaragoza', 'slug' => 'zaragoza-p15', 'region_id' => 7],
         ]);
     }
 }

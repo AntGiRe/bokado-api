@@ -13,7 +13,7 @@ class TouristicRegionsTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('touristic_regions')->insert([
-            ['name' => 'Costa del Sol', 'description' => 'Description for Costa del Sol'],
+            ['slug' => 'costa-del-sol-tr1'],
         ]);
     }
 }

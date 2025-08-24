@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\UserMinimalResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Services\Auth\AuthService;
@@ -23,19 +25,16 @@ class AuthenticatedSessionController extends Controller
 
         $token = $user->createToken('api')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Login successful',
-            'user' => $user,
-            'token' => $token,
-        ]);
+        return ApiResponseHelper::single(
+            ['user' => new UserMinimalResource($user), 'token' => $token],
+            'Login successful'
+        );
     }
 
     public function destroy(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'message' => 'Logged out successfully'
-        ]);
+        return ApiResponseHelper::message('Logged out successfully');
     }
 }

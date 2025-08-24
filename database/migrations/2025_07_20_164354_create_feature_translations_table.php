@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('feature_id')->constrained('features')->onDelete('cascade');
             $table->string('locale')->index();
+            $table->foreign('locale')->references('code')->on('languages')->onDelete('cascade');
             $table->string('name')->nullable();
             $table->unique(['feature_id', 'locale'], 'feature_locale_unique');
             $table->timestamps();

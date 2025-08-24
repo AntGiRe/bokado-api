@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            LanguageTableSeeder::class,
             CountriesTableSeeder::class,
             RegionsTableSeeder::class,
             ProvincesTableSeeder::class,
@@ -29,6 +30,7 @@ class DatabaseSeeder extends Seeder
             CityTouristicRegionsTableSeeder::class,
             CurrencyTranslationsTableSeeder::class,
             FeatureTranslationsTableSeeder::class,
+            TouristicRegionTranslationsTableSeeder::class,
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest
 {
@@ -27,6 +28,11 @@ class RegisterRequest extends FormRequest
             'email' => 'required|string|lowercase|email|max:255|unique:users,email',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone' => 'required|string|max:15|unique:users,phone',
+            'preferred_language' => [
+                'nullable',
+                'string',
+                Rule::exists('languages', 'code')->where('is_active', true),
+            ],
         ];
     }
 }

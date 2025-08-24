@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('payment_method_id')->constrained('payment_methods')->onDelete('cascade');
             $table->string('locale')->index();
+            $table->foreign('locale')->references('code')->on('languages')->onDelete('cascade');
             $table->string('name')->nullable();
             $table->unique(['payment_method_id', 'locale'], 'payment_method_locale_unique');
             $table->timestamps();

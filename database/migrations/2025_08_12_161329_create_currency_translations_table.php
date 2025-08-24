@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('currency_id')->constrained()->onDelete('cascade');
             $table->string('locale')->index();
+            $table->foreign('locale')->references('code')->on('languages')->onDelete('cascade');
             $table->string('name');
             $table->timestamps();
         });

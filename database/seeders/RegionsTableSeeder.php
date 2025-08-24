@@ -14,16 +14,16 @@ class RegionsTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('regions')->insert([
-            ['code' => 'Andalucía', 'country_id' => 1],
-            ['code' => 'Cataluña', 'country_id' => 1],
-            ['code' => 'Madrid', 'country_id' => 1],
-            ['code' => 'Valencia', 'country_id' => 1],
-            ['code' => 'Galicia', 'country_id' => 1],
-            ['code' => 'País Vasco', 'country_id' => 1],
-            ['code' => 'Canarias', 'country_id' => 1],
-            ['code' => 'Aragón', 'country_id' => 1],
-            ['code' => 'Castilla y León', 'country_id' => 1],
-            ['code' => 'Castilla-La Mancha', 'country_id' => 1],
+            ['code' => 'Andalucía', 'slug' => 'andalucia-r1', 'country_id' => 1],
+            ['code' => 'Cataluña', 'slug' => 'cataluna-r2', 'country_id' => 1],
+            ['code' => 'Madrid', 'slug' => 'madrid-r3', 'country_id' => 1],
+            ['code' => 'Valencia', 'slug' => 'valencia-r4', 'country_id' => 1],
+            ['code' => 'Galicia', 'slug' => 'galicia-r5', 'country_id' => 1],
+            ['code' => 'País Vasco', 'slug' => 'pais-vasco-r6', 'country_id' => 1],
+            ['code' => 'Canarias', 'slug' => 'canarias-r7', 'country_id' => 1],
+            ['code' => 'Aragón', 'slug' => 'aragon-r8', 'country_id' => 1],
+            ['code' => 'Castilla y León', 'slug' => 'castilla-y-leon-r9', 'country_id' => 1],
+            ['code' => 'Castilla-La Mancha', 'slug' => 'castilla-la-mancha-r10', 'country_id' => 1],
         ]);
     }
 }
