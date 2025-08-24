@@ -21,9 +21,10 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+        $frontendUrl = config('app.frontend_url');
 
-        ResetPassword::createUrlUsing(function ($user, string $token) {
-            return "https://bokado.com/reset-password?token={$token}&email=" . urlencode($user->email);
+        ResetPassword::createUrlUsing(function ($user, string $token) use ($frontendUrl) {
+            return "{$frontendUrl}/reset-password?token={$token}&email=" . urlencode($user->email);
         });
     }
 }
