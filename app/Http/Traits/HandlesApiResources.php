@@ -6,45 +6,46 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use App\Helpers\ApiResponseHelper;
-use Illuminate\Support\Str;
 
-trait HandlesTranslatedResources
+trait HandlesApiResources
 {
     abstract protected function getTranslationService();
 
-    public function translatedIndex(Request $request, string $modelClass, bool $withTimestamps = false)
+    public function resourceIndex(Request $request, string $modelClass, array $withRelations = [], bool $withTranslation = true, bool $withTimestamps = false)
     {
         $locale = app()->getLocale();
         $perPage = $request->query('per_page', 20);
 
-        $query = $modelClass::with('translations');
+        $hasTranslations = method_exists($modelClass, 'translations');
+        $relations = $withTranslation && $hasTranslations
+            ? array_merge(['translations'], $withRelations)
+            : $withRelations;
+
+        $query = $modelClass::with($relations);
 
         foreach ($request->query() as $key => $value) {
-            // Evita campos que no son filtros
             if (in_array($key, ['per_page', 'page'])) {
                 continue;
             }
 
-            // Ejemplo: filter => scopeFilterByName
-            if ($key === 'filter') {
-                if (method_exists($modelClass, 'scopeFilterByName')) {
-                    $query->filterByName($value, $locale);
-                }
+            if ($key === 'filter' && method_exists($modelClass, 'scopeFilterByName')) {
+                $query->filterByName($value, $locale);
                 continue;
             }
 
-            // Genera nombre del scope dinámicamente, ej: countryId => filterByCountryId
-            $scopeName = 'filterBy' . ucfirst(Str::camel($key));
+            $scopeName = 'filterBy' . ucfirst(\Illuminate\Support\Str::camel($key));
             if (method_exists($modelClass, 'scope' . ucfirst($scopeName))) {
                 $query->{$scopeName}($value);
             }
         }
 
-        $results = $query->paginate($perPage)->through(function (Model $item) use ($locale, $withTimestamps) {
-            $item = $this->translateNameRecursively($item, $locale, 'en');
-            unset($item->translations);
+        $results = $query->paginate($perPage)->through(function (Model $item) use ($locale, $withTranslation, $withTimestamps) {
+            if ($withTranslation) {
+                $item = $this->translateNameRecursively($item, $locale, 'en');
+                unset($item->translations);
+            }
             if (!$withTimestamps) {
-                unset($item->created_at, $item->updated_at);
+                $item = $this->removeTimestampsRecursively($item);
             }
             return $item;
         });
@@ -52,21 +53,28 @@ trait HandlesTranslatedResources
         return ApiResponseHelper::paginated($results);
     }
 
-    public function translatedShow($id, string $modelClass, array $withRelations = [], bool $withTimestamps = false)
+    public function resourceShow($id, string $modelClass, array $withRelations = [], bool $withTranslation = true, bool $withTimestamps = false, ?string $message = null, int $statusCode = 200)
     {
         $locale = app()->getLocale();
 
-        $query = $modelClass::with(array_merge(['translations'], $withRelations));
+        $hasTranslations = method_exists($modelClass, 'translations');
+        $relations = $withTranslation && $hasTranslations
+            ? array_merge(['translations'], $withRelations)
+            : $withRelations;
+
+        $query = $modelClass::with($relations);
         $item = $query->findOrFail($id);
 
-        $item = $this->translateNameRecursively($item, $locale);
-        unset($item->translations);
+        if ($withTranslation) {
+            $item = $this->translateNameRecursively($item, $locale);
+            unset($item->translations);
+        }
 
         if (!$withTimestamps) {
             $item = $this->removeTimestampsRecursively($item);
         }
 
-        return ApiResponseHelper::single($item);
+        return ApiResponseHelper::single($item, $message, $statusCode);
     }
 
     protected function removeTimestampsRecursively($model)

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Locations;
 
 use App\Http\Controllers\Controller;
-use App\Http\Traits\HandlesTranslatedResources;
+use App\Http\Traits\HandlesApiResources;
 use App\Services\Utils\TranslationFallbackService;
 use App\Models\TouristicRegion;
 use Illuminate\Http\JsonResponse;
@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class TouristicRegionController extends Controller
 {
-    use HandlesTranslatedResources;
+    use HandlesApiResources;
 
     protected $translationService;
 
@@ -30,7 +30,7 @@ class TouristicRegionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        return $this->translatedIndex($request, TouristicRegion::class);
+        return $this->resourceIndex($request, TouristicRegion::class);
     }
 
     /**
@@ -38,6 +38,6 @@ class TouristicRegionController extends Controller
      */
     public function show($id): JsonResponse
     {
-        return $this->translatedShow($id, TouristicRegion::class, ['cities.translations']);
+        return $this->resourceShow($id, TouristicRegion::class, ['cities.translations']);
     }
 }

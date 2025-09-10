@@ -2,40 +2,42 @@
 
 namespace App\Http\Controllers\Api\v1\Manage\Restaurants;
 
+use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Manage\StoreRestaurantPaymentMethodRequest;
 use App\Services\Manage\RestaurantPaymentMethodService;
+use App\Services\Utils\TranslationFallbackService;
+use App\Http\Traits\HandlesApiResources;
 use App\Models\Restaurant;
 use App\Models\RestaurantPaymentMethod;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 
 class RestaurantPaymentMethodController extends Controller
 {
-    public function __construct(private RestaurantPaymentMethodService $service) {}
+    use HandlesApiResources;
+
+    protected $translationService;
+
+    public function __construct(private RestaurantPaymentMethodService $service, TranslationFallbackService $translationService) {
+        $this->translationService = $translationService;
+    }
+
+    protected function getTranslationService()
+    {
+        return $this->translationService;
+    }
 
     public function index(Request $request, Restaurant $restaurant): JsonResponse
     {
-        $data = $this->service->getAllByRestaurant($restaurant->id);
-
-        return response()->json([
-            'data' => $data,
-        ]);
+        return $this->resourceIndex($request, RestaurantPaymentMethod::class, ['paymentMethod.translations'], true);
     }
 
     public function show(Request $request, Restaurant $restaurant, $payment_method): JsonResponse
     {
         $item = $this->service->getByRestaurantAndPaymentMethod($restaurant->id, $payment_method);
 
-        return response()->json([
-            'data' => [
-                'id' => $item->id,
-                'restaurant_id' => $item->restaurant_id,
-                'payment_method_id' => $item->payment_method_id,
-                'payment_method_name' => $item->paymentMethod->translated_name ?? $item->paymentMethod->code
-            ],
-        ]);
+        return $this->resourceShow($item->id, RestaurantPaymentMethod::class, ['paymentMethod.translations'], true);
     }
 
     public function store(StoreRestaurantPaymentMethodRequest $request, Restaurant $restaurant): JsonResponse
@@ -51,23 +53,13 @@ class RestaurantPaymentMethodController extends Controller
             $item = $this->service->create($data)->load('paymentMethod.translations');
         }
 
-        return response()->json([
-            'data' => [
-                'id' => $item->id,
-                'restaurant_id' => $item->restaurant_id,
-                'payment_method_id' => $item->payment_method_id,
-                'payment_method_name' => $item->paymentMethod->translated_name
-                    ?? $item->paymentMethod->code
-            ],
-        ], 201);
+        return $this->resourceShow($item->id, RestaurantPaymentMethod::class, ['paymentMethod.translations'], true, false, 'Payment method added successfully', 201);
     }
 
     public function destroy($restaurantId, $paymentMethodId): JsonResponse
     {
         $this->service->deleteByRestaurantAndPaymentMethod($restaurantId, $paymentMethodId);
 
-        return response()->json([
-            'message' => 'Deleted successfully',
-        ]);
+        return ApiResponseHelper::message('Payment method removed successfully');
     }
 }

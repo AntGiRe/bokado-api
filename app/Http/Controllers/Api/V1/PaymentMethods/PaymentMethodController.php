@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Api\v1\PaymentMethods;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PaymentMethod;
-use App\Http\Traits\HandlesTranslatedResources;
+use App\Http\Traits\HandlesApiResources;
 use App\Services\Utils\TranslationFallbackService;
 
 class PaymentMethodController extends Controller
 {
-    use HandlesTranslatedResources;
+    use HandlesApiResources;
 
     protected $translationService;
 
@@ -29,7 +29,7 @@ class PaymentMethodController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->translatedIndex($request, PaymentMethod::class);
+        return $this->resourceIndex($request, PaymentMethod::class);
     }
 
     /**
@@ -37,6 +37,6 @@ class PaymentMethodController extends Controller
      */
     public function show($id)
     {
-        return $this->translatedShow($id, PaymentMethod::class);
+        return $this->resourceShow($id, PaymentMethod::class);
     }
 }

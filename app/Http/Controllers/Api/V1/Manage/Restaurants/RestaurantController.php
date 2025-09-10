@@ -2,16 +2,31 @@
 
 namespace App\Http\Controllers\Api\v1\Manage\Restaurants;
 
+use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Manage\StoreRestaurantRequest;
 use App\Http\Requests\Manage\UpdateRestaurantRequest;
-use App\Models\Restaurant;
+use App\Services\Utils\TranslationFallbackService;
+use App\Http\Traits\HandlesApiResources;
 use App\Services\Manage\RestaurantService;
+use App\Models\Restaurant;
 use Illuminate\Http\Request;
 
 class RestaurantController extends Controller
 {
-    public function __construct(private RestaurantService $restaurantService){}
+    use HandlesApiResources;
+
+    protected $translationService;
+
+    public function __construct(TranslationFallbackService $translationService, private RestaurantService $service)
+    {
+        $this->translationService = $translationService;
+    }
+
+    protected function getTranslationService()
+    {
+        return $this->translationService;
+    }
 
     /**
      * Display a listing of the resource.
@@ -21,15 +36,7 @@ class RestaurantController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $request->user();
-
-        $restaurants = $user->restaurants()
-            ->with('city')
-            ->get();
-
-        return response()->json([
-            'data' => $restaurants
-        ]);
+        return $this->resourceIndex($request, Restaurant::class, ['city'], false);
     }
 
     /**
@@ -42,12 +49,9 @@ class RestaurantController extends Controller
     {
         $validated = $request->validated();
 
-        $restaurant = $this->restaurantService->createWithOwner($validated, $request->user());
+        $restaurant = $this->service->createWithOwner($validated, $request->user());
 
-        return response()->json([
-            'message' => 'Restaurant created successfully',
-            'data' => $restaurant
-        ], 201);
+        return $this->resourceShow($restaurant->id, Restaurant::class, ['city','currency'], false, false, 'Restaurant created successfully', 201);
     }
 
     /**
@@ -61,12 +65,9 @@ class RestaurantController extends Controller
     {
         $validated = $request->validated();
 
-        $this->restaurantService->update($restaurant, $validated);
+        $this->service->update($restaurant, $validated);
 
-        return response()->json([
-            'message' => 'Restaurant updated successfully',
-            'data' => $restaurant
-        ]);
+        return $this->resourceShow($restaurant->id, Restaurant::class, ['city'], false, false, 'Restaurant updated successfully', 200);
     }
 
     /**
@@ -77,10 +78,7 @@ class RestaurantController extends Controller
      */
     public function show(Restaurant $restaurant)
     {
-        return response()->json([
-            'message' => 'Restaurant retrieved successfully',
-            'data' => $restaurant
-        ]);
+        return $this->resourceShow($restaurant->id, Restaurant::class, ['city','currency'], false, false, 'Restaurant retrieved successfully', 200);
     }
 
     /**
@@ -93,9 +91,7 @@ class RestaurantController extends Controller
     {
         $restaurant->delete();
 
-        return response()->json([
-            'message' => 'Restaurant deleted successfully'
-        ]);
+        return ApiResponseHelper::message('Restaurant deleted successfully');
     }
 
     /**
@@ -107,15 +103,13 @@ class RestaurantController extends Controller
     public function activate(Restaurant $restaurant)
     {
         if (!$restaurant->isReadyToActivate()) {
-            return response()->json([
-                'message' => 'Missing required settings to activate the restaurant.'
-            ], 422);
+            return ApiResponseHelper::message('The restaurant cannot be activated because it is missing required settings.', 422);
         }
 
         $restaurant->is_active = true;
         $restaurant->save();
 
-        return response()->json(['message' => 'Restaurant activated successfully.']);
+        return ApiResponseHelper::message('Restaurant activated successfully.');
     }
 
     /**
@@ -127,12 +121,12 @@ class RestaurantController extends Controller
     public function deactivate(Restaurant $restaurant)
     {
         if (!$restaurant->is_active) {
-            return response()->json(['message' => 'Restaurant is already inactive.'], 422);
+            return ApiResponseHelper::message('The restaurant is already inactive.', 422);
         }
 
         $restaurant->is_active = false;
         $restaurant->save();
 
-        return response()->json(['message' => 'Restaurante desactivado con éxito.']);
+        return ApiResponseHelper::message('Restaurant deactivated successfully.');
     }
 }

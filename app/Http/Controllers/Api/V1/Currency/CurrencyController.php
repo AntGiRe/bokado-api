@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api\v1\Currency;
 
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
-use App\Http\Traits\HandlesTranslatedResources;
+use App\Http\Traits\HandlesApiResources;
 use App\Services\Utils\TranslationFallbackService;
 use Illuminate\Http\Request;
 
 class CurrencyController extends Controller
 {
-    use HandlesTranslatedResources;
+    use HandlesApiResources;
 
     protected $translationService;
 
@@ -26,11 +26,11 @@ class CurrencyController extends Controller
 
     public function index(Request $request)
     {
-        return $this->translatedIndex($request, Currency::class);
+        return $this->resourceIndex($request, Currency::class);
     }
 
     public function show($id)
     {
-        return $this->translatedShow($id, Currency::class);
+        return $this->resourceShow($id, Currency::class);
     }
 }

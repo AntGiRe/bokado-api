@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Api\v1\Locations;
 
 use App\Http\Controllers\Controller;
 use App\Models\Province;
-use App\Http\Traits\HandlesTranslatedResources;
+use App\Http\Traits\HandlesApiResources;
 use App\Services\Utils\TranslationFallbackService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProvinceController extends Controller
 {
-    use HandlesTranslatedResources;
+    use HandlesApiResources;
 
     protected $translationService;
 
@@ -30,7 +30,7 @@ class ProvinceController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        return $this->translatedIndex($request, Province::class);
+        return $this->resourceIndex($request, Province::class);
     }
 
     /**
@@ -38,6 +38,6 @@ class ProvinceController extends Controller
      */
     public function show($id): JsonResponse
     {
-        return $this->translatedShow($id, Province::class, ['region.translations', 'region.country.translations']);
+        return $this->resourceShow($id, Province::class, ['region.translations', 'region.country.translations']);
     }
 }

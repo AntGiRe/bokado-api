@@ -82,13 +82,13 @@ Route::prefix('v1')->middleware(SetUserLocale::class)->group(function () {
     });
 
     // Payment methods TODO DELETE in admin
-    Route::prefix('currency')->group(function () {
+    Route::prefix('currencies')->group(function () {
         Route::get('/', [CurrencyController::class, 'index']);
         Route::get('/{currency}', [CurrencyController::class, 'show']);
     });
 
     // Payment methods TODO DELETE in admin
-    Route::prefix('feature')->group(function () {
+    Route::prefix('features')->group(function () {
         Route::get('/', [FeatureController::class, 'index']);
         Route::get('/{feature}', [FeatureController::class, 'show']);
     });

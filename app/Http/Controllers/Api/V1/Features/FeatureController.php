@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Features;
 
 use App\Http\Controllers\Controller;
-use App\Http\Traits\HandlesTranslatedResources;
+use App\Http\Traits\HandlesApiResources;
 use App\Services\Utils\TranslationFallbackService;
 use App\Helpers\ApiResponseHelper;
 use App\Models\Feature;
@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class FeatureController extends Controller
 {
-    use HandlesTranslatedResources;
+    use HandlesApiResources;
 
     protected $translationService;
 
@@ -27,11 +27,11 @@ class FeatureController extends Controller
 
     public function index(Request $request)
     {
-        return $this->translatedIndex($request, Feature::class);
+        return $this->resourceIndex($request, Feature::class);
     }
 
     public function show($id)
     {
-        return $this->translatedShow($id, Feature::class);
+        return $this->resourceShow($id, Feature::class);
     }
 }
