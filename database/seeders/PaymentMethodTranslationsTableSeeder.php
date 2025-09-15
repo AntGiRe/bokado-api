@@ -13,6 +13,14 @@ class PaymentMethodTranslationsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('payment_methods')->insert([
+            ['id' => 1, 'code' => 'credit_card'],
+            ['id' => 2, 'code' => 'cash'],
+            ['id' => 3, 'code' => 'paypal'],
+            ['id' => 4, 'code' => 'apple_pay'],
+            ['id' => 5, 'code' => 'google_pay'],
+        ]);
+        
         DB::table('payment_method_translations')->insert([
             [
                 'payment_method_id' => 1,

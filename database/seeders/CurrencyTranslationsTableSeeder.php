@@ -13,6 +13,12 @@ class CurrencyTranslationsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('currencies')->insert([
+            ['id' => 1, 'name' => 'Euro', 'code' => 'EUR', 'symbol' => '€'],
+            ['id' => 2, 'name' => 'US Dollar', 'code' => 'USD', 'symbol' => '$'],
+            ['id' => 3, 'name' => 'British Pound', 'code' => 'GBP', 'symbol' => '£'],
+        ]);
+        
         DB::table('currency_translations')->insert([
             ['currency_id' => 1, 'locale' => 'en', 'name' => 'Euro'],
             ['currency_id' => 1, 'locale' => 'es', 'name' => 'Euro'],

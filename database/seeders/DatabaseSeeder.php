@@ -15,18 +15,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             LanguageTableSeeder::class,
-            CountriesTableSeeder::class,
-            RegionsTableSeeder::class,
-            ProvincesTableSeeder::class,
-            CitiesTableSeeder::class,
-            CurrenciesTableSeeder::class,
-            PaymentMethodsTableSeeder::class,
             PaymentMethodTranslationsTableSeeder::class,
             CountryTranslationsTableSeeder::class,
             RegionTranslationsTableSeeder::class,
             ProvinceTranslationsTableSeeder::class,
             CityTranslationsTableSeeder::class,
-            TouristicRegionsTableSeeder::class,
             CityTouristicRegionsTableSeeder::class,
             CurrencyTranslationsTableSeeder::class,
             FeatureTranslationsTableSeeder::class,

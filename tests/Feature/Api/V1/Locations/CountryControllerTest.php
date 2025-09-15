@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Api\V1;
 
+use Database\Seeders\CountryTranslationsTableSeeder;
 use PHPUnit\Framework\Attributes\Test;
-use Database\Seeders\CurrencyTranslationsTableSeeder;
 use Database\Seeders\LanguageTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CurrencyControllerTest extends TestCase
+class CountryControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -17,51 +17,51 @@ class CurrencyControllerTest extends TestCase
         parent::setUp();
 
         $this->seed(LanguageTableSeeder::class);
-        $this->seed(CurrencyTranslationsTableSeeder::class);
+        $this->seed(CountryTranslationsTableSeeder::class);
     }
 
     #[Test]
-    public function it_returns_paginated_list_of_currencies()
+    public function it_returns_paginated_list_of_countries()
     {
-        $response = $this->getJson('/api/v1/currencies');
+        $response = $this->getJson('/api/v1/locations/countries');
 
         $response->assertStatus(200);
 
         // Check main structure
         $response->assertJsonStructure([
             'data' => [
-                '*' => ['id', 'code', 'symbol', 'name']
+                '*' => ['id', 'code', 'slug', 'name']
             ],
             'pagination' => ['current_page', 'per_page', 'total', 'last_page']
         ]);
 
         // Check specific values
         $response->assertJsonFragment([
-            'code' => 'USD',
-            'symbol' => '$',
-            'name' => 'US Dollar'
+            'code' => 'ES',
+            'slug' => 'spain',
+            'name' => 'Spain'
         ]);
     }
 
     #[Test]
-    public function it_returns_currencies_in_different_locales()
+    public function it_returns_countries_in_different_locales()
     {
         // Test with locale 'en'
-        $responseEn = $this->getJson('/api/v1/currencies?locale=en');
+        $responseEn = $this->getJson('/api/v1/locations/countries?locale=en');
 
         $responseEn->assertStatus(200);
 
         $responseEn->assertJsonFragment([
-            'name' => 'US Dollar', 
+            'name' => 'Spain',
         ]);
 
         // Test with locale 'es'
-        $responseEs = $this->getJson('/api/v1/currencies?locale=es');
+        $responseEs = $this->getJson('/api/v1/locations/countries?locale=es');
 
         $responseEs->assertStatus(200);
 
         $responseEs->assertJsonFragment([
-            'name' => 'Dólar estadounidense',
+            'name' => 'España',
         ]);
     }
 
@@ -69,7 +69,7 @@ class CurrencyControllerTest extends TestCase
     public function it_respects_per_page_parameter()
     {
         // Requesting only 1 per page
-        $response = $this->getJson('/api/v1/currencies?per_page=1');
+        $response = $this->getJson('/api/v1/locations/countries?per_page=1');
 
         $response->assertStatus(200);
 
@@ -83,50 +83,50 @@ class CurrencyControllerTest extends TestCase
     }
 
     #[Test]
-    public function it_filters_currencies_by_name()
+    public function it_filters_countries_by_name()
     {
-        // Filter by 'Dolar' (in Spanish)
-        $response = $this->getJson('/api/v1/currencies?locale=es&filter=Dólar');
+        // Filter by 'España'
+        $response = $this->getJson('/api/v1/locations/countries?locale=es&filter=España');
 
         $response->assertStatus(200);
 
-        // Check that the response contains 'Dólar estadounidense'
+        // Check that the response contains 'España'
         $response->assertJsonFragment([
-            'name' => 'Dólar estadounidense',
+            'name' => 'España',
         ]);
 
-        // And does not contain other currencies that do not have 'Dólar' in the name
+        // And does not contain other countries that do not have 'España' in the name
         $data = $response->json('data');
-        foreach ($data as $currency) {
-            $this->assertStringContainsString('Dólar', $currency['name']);
+        foreach ($data as $country) {
+            $this->assertStringContainsString('España', $country['name']);
         }
     }
 
     #[Test]
-    public function it_returns_a_single_currency()
+    public function it_returns_a_single_country()
     {
-        // Get currency with id 2 (USD)
-        $response = $this->getJson('/api/v1/currencies/2');
+        // Get country with id 1
+        $response = $this->getJson('/api/v1/locations/countries/1');
 
         $response->assertStatus(200);
 
         $response->assertJsonStructure([
-            'data' => ['id', 'code', 'symbol', 'name']
+            'data' => ['id', 'code', 'name']
         ]);
 
         $response->assertJsonFragment([
-            'id' => 2,
-            'code' => 'USD',
-            'symbol' => '$',
-            'name' => 'US Dollar'
+            'id' => 1,
+            'code' => 'ES',
+            'name' => 'Spain'
         ]);
+
     }
 
     #[Test]
-    public function it_returns_404_for_invalid_currency_id()
+    public function it_returns_404_for_invalid_country_id()
     {
-        // Get currency with invalid id
-        $response = $this->getJson('/api/v1/currencies/9999');
+        // Get country with invalid id
+        $response = $this->getJson('/api/v1/locations/countries/9999');
 
         $response->assertStatus(404);
     }

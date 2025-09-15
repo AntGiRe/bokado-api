@@ -13,6 +13,11 @@ class ProvinceTranslationsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('provinces')->insert([
+            ['id' => 1, 'code' => 'Málaga', 'slug' => 'malaga-p1', 'region_id' => 1],
+            ['id' => 2, 'code' => 'Cádiz', 'slug' => 'cadiz-p2', 'region_id' => 1],
+        ]);
+
         DB::table('province_translations')->insert([
             [
                 'province_id' => 1,
@@ -20,36 +25,20 @@ class ProvinceTranslationsTableSeeder extends Seeder
                 'name' => 'Malaga',
             ],
             [
-                'province_id' => 2,
+                'province_id' => 1,
                 'locale' => 'es',
                 'name' => 'Malaga',
             ],
             [
-                'province_id' => 3,
+                'province_id' => 2,
                 'locale' => 'es',
                 'name' => 'Cadiz',
             ],
             [
-                'province_id' => 4,
+                'province_id' => 2,
                 'locale' => 'en',
-                'name' => 'Seville',
+                'name' => 'Cadiz',
             ],
-            [
-                'province_id' => 5,
-                'locale' => 'en',
-                'name' => 'Granada',
-            ],
-            [
-                'province_id' => 6,
-                'locale' => 'en',
-                'name' => 'Almeria',
-            ],
-            [
-                'province_id' => 7,
-                'locale' => 'en',
-                'name' => 'Córdoba',
-            ],
-            
         ]);
     }
 }

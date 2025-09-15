@@ -3,12 +3,12 @@
 namespace Tests\Feature\Api\V1;
 
 use PHPUnit\Framework\Attributes\Test;
-use Database\Seeders\CurrencyTranslationsTableSeeder;
 use Database\Seeders\LanguageTableSeeder;
+use Database\Seeders\PaymentMethodTranslationsTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CurrencyControllerTest extends TestCase
+class PaymentMethodControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -17,51 +17,50 @@ class CurrencyControllerTest extends TestCase
         parent::setUp();
 
         $this->seed(LanguageTableSeeder::class);
-        $this->seed(CurrencyTranslationsTableSeeder::class);
+        $this->seed(PaymentMethodTranslationsTableSeeder::class);
     }
 
     #[Test]
-    public function it_returns_paginated_list_of_currencies()
+    public function it_returns_paginated_list_of_payment_methods()
     {
-        $response = $this->getJson('/api/v1/currencies');
+        $response = $this->getJson('/api/v1/payment-methods');
 
         $response->assertStatus(200);
 
         // Check main structure
         $response->assertJsonStructure([
             'data' => [
-                '*' => ['id', 'code', 'symbol', 'name']
+                '*' => ['id', 'code', 'name']
             ],
             'pagination' => ['current_page', 'per_page', 'total', 'last_page']
         ]);
 
         // Check specific values
         $response->assertJsonFragment([
-            'code' => 'USD',
-            'symbol' => '$',
-            'name' => 'US Dollar'
+            'code' => 'cash',
+            'name' => 'Cash'
         ]);
     }
 
     #[Test]
-    public function it_returns_currencies_in_different_locales()
+    public function it_returns_payment_methods_in_different_locales()
     {
         // Test with locale 'en'
-        $responseEn = $this->getJson('/api/v1/currencies?locale=en');
+        $responseEn = $this->getJson('/api/v1/payment-methods?locale=en');
 
         $responseEn->assertStatus(200);
 
         $responseEn->assertJsonFragment([
-            'name' => 'US Dollar', 
+            'name' => 'Cash',
         ]);
 
         // Test with locale 'es'
-        $responseEs = $this->getJson('/api/v1/currencies?locale=es');
+        $responseEs = $this->getJson('/api/v1/payment-methods?locale=es');
 
         $responseEs->assertStatus(200);
 
         $responseEs->assertJsonFragment([
-            'name' => 'Dólar estadounidense',
+            'name' => 'Efectivo',
         ]);
     }
 
@@ -69,7 +68,7 @@ class CurrencyControllerTest extends TestCase
     public function it_respects_per_page_parameter()
     {
         // Requesting only 1 per page
-        $response = $this->getJson('/api/v1/currencies?per_page=1');
+        $response = $this->getJson('/api/v1/payment-methods?per_page=1');
 
         $response->assertStatus(200);
 
@@ -83,50 +82,50 @@ class CurrencyControllerTest extends TestCase
     }
 
     #[Test]
-    public function it_filters_currencies_by_name()
+    public function it_filters_payment_methods_by_name()
     {
-        // Filter by 'Dolar' (in Spanish)
-        $response = $this->getJson('/api/v1/currencies?locale=es&filter=Dólar');
+        // Filter by 'Efectivo'
+        $response = $this->getJson('/api/v1/payment-methods?locale=es&filter=Efectivo');
 
         $response->assertStatus(200);
 
-        // Check that the response contains 'Dólar estadounidense'
+        // Check that the response contains 'Efectivo'
         $response->assertJsonFragment([
-            'name' => 'Dólar estadounidense',
+            'name' => 'Efectivo',
         ]);
 
-        // And does not contain other currencies that do not have 'Dólar' in the name
+        // And does not contain other payment methods that do not have 'Efectivo' in the name
         $data = $response->json('data');
         foreach ($data as $currency) {
-            $this->assertStringContainsString('Dólar', $currency['name']);
+            $this->assertStringContainsString('Efectivo', $currency['name']);
         }
     }
 
     #[Test]
-    public function it_returns_a_single_currency()
+    public function it_returns_a_single_payment_method()
     {
-        // Get currency with id 2 (USD)
-        $response = $this->getJson('/api/v1/currencies/2');
+        // Get payment method with id 2
+        $response = $this->getJson('/api/v1/payment-methods/2');
 
         $response->assertStatus(200);
 
         $response->assertJsonStructure([
-            'data' => ['id', 'code', 'symbol', 'name']
+            'data' => ['id', 'code', 'name']
         ]);
 
         $response->assertJsonFragment([
             'id' => 2,
-            'code' => 'USD',
-            'symbol' => '$',
-            'name' => 'US Dollar'
+            'code' => 'cash',
+            'name' => 'Cash'
         ]);
+
     }
 
     #[Test]
-    public function it_returns_404_for_invalid_currency_id()
+    public function it_returns_404_for_invalid_payment_method_id()
     {
-        // Get currency with invalid id
-        $response = $this->getJson('/api/v1/currencies/9999');
+        // Get payment method with invalid id
+        $response = $this->getJson('/api/v1/payment-methods/9999');
 
         $response->assertStatus(404);
     }

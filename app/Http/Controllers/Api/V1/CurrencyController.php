@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Features;
+namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Currency;
 use App\Http\Traits\HandlesApiResources;
 use App\Services\Utils\TranslationFallbackService;
-use App\Helpers\ApiResponseHelper;
-use App\Models\Feature;
 use Illuminate\Http\Request;
 
-class FeatureController extends Controller
+class CurrencyController extends Controller
 {
     use HandlesApiResources;
 
@@ -27,11 +26,11 @@ class FeatureController extends Controller
 
     public function index(Request $request)
     {
-        return $this->resourceIndex($request, Feature::class);
+        return $this->resourceIndex($request, Currency::class);
     }
 
     public function show($id)
     {
-        return $this->resourceShow($id, Feature::class);
+        return $this->resourceShow($id, Currency::class);
     }
 }

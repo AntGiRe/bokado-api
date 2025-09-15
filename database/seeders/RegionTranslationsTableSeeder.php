@@ -13,6 +13,15 @@ class RegionTranslationsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('regions')->insert([
+            ['id' => 1, 'code' => 'Andalucía', 'slug' => 'andalucia-r1', 'country_id' => 1],
+            ['id' => 2, 'code' => 'Cataluña', 'slug' => 'cataluna-r2', 'country_id' => 1],
+            ['id' => 3, 'code' => 'Madrid', 'slug' => 'madrid-r3', 'country_id' => 1],
+            ['id' => 4, 'code' => 'Valencia', 'slug' => 'valencia-r4', 'country_id' => 1],
+            ['id' => 5, 'code' => 'Galicia', 'slug' => 'galicia-r5', 'country_id' => 1],
+            ['id' => 6, 'code' => 'País Vasco', 'slug' => 'pais-vasco-r6', 'country_id' => 1],
+        ]);
+
         DB::table('region_translations')->insert([
             [
                 'region_id' => 1,
@@ -73,26 +82,6 @@ class RegionTranslationsTableSeeder extends Seeder
                 'region_id' => 6,
                 'locale' => 'en',
                 'name' => 'Basque Country'
-            ],
-            [
-                'region_id' => 7,
-                'locale' => 'es',
-                'name' => 'Aragón'
-            ],
-            [
-                'region_id' => 7,
-                'locale' => 'en',
-                'name' => 'Aragon'
-            ],
-            [
-                'region_id' => 8,
-                'locale' => 'es',
-                'name' => 'Castilla y León'
-            ],
-            [
-                'region_id' => 8,
-                'locale' => 'en',
-                'name' => 'Castile and León'
             ],
         ]);
     }

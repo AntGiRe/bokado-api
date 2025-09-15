@@ -13,6 +13,14 @@ class CityTranslationsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('cities')->insert([
+            ['id' => 1, 'code' => 'Málaga', 'slug' => 'malaga-c1', 'province_id' => 1],
+            ['id' => 2, 'code' => 'Torremolinos', 'slug' => 'torremolinos-c2', 'province_id' => 1],
+            ['id' => 3, 'code' => 'Alhaurín de la Torre', 'slug' => 'alhaurin-de-la-torre-c3', 'province_id' => 1],
+            ['id' => 4, 'code' => 'Marbella', 'slug' => 'marbella-c4', 'province_id' => 1],
+            ['id' => 5, 'code' => 'Fuengirola', 'slug' => 'fuengirola-c5', 'province_id' => 1],
+        ]);
+        
         DB::table('city_translations')->insert([
             ['city_id' => 1, 'locale' => 'es', 'name' => 'Málaga'],
             ['city_id' => 2, 'locale' => 'es', 'name' => 'Torremolinos'],

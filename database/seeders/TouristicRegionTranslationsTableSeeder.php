@@ -13,6 +13,10 @@ class TouristicRegionTranslationsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('touristic_regions')->insert([
+            ['id' => 1, 'slug' => 'costa-del-sol-tr1'],
+        ]);
+
         DB::table('touristic_region_translations')->insert([
             [
                 'touristic_region_id' => 1,
@@ -32,7 +36,6 @@ class TouristicRegionTranslationsTableSeeder extends Seeder
                 'name' => 'Costa del Sol',
                 'description' => 'Zone touristique célèbre pour ses plages et son climat chaud dans la province de Malaga.',
             ],
-            // Agrega más idiomas si quieres
         ]);
     }
 }
